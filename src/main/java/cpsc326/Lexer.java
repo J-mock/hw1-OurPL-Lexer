@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static cpsc326.OurPL.error;
 import static cpsc326.TokenType.AND;
 import static cpsc326.TokenType.BANG;
 import static cpsc326.TokenType.BANG_EQUAL;
@@ -51,7 +52,7 @@ class Lexer {
     private int current = 0;
     private int line = 1;
     private static final Map<String, TokenType> keywords;
-
+    
     Lexer(String source) {
         this.source = source;
     }
@@ -73,7 +74,7 @@ class Lexer {
         keywords.put("print", PRINT);
         keywords.put("return", RETURN);
         keywords.put("while", WHILE);
-        // TODO: add keywrods 
+        
         
     }
 
@@ -151,7 +152,7 @@ class Lexer {
             advance();
         }
         if(isAtEnd()){
-            System.err.println("End of file found before end of stirng");
+            error(line, "Unterminated string.");
             return;
         }
         literal = source.substring(new_start, current);
@@ -285,6 +286,7 @@ class Lexer {
                 break;
             
         }
+        // No cases match so should be an identifier or a digit
         if(isAlphaNumeric(check)){
             if(isDigit(check)){
                 // Call Number
@@ -292,7 +294,12 @@ class Lexer {
             }
             if(isAlpha(check) && check != '_'){
                 identifier();
+            }else{
+                
+                error(line, "Unexpected character.");
             }
+        }else{
+            error(line, "Unexpected character.");
         }
         
         // May want to wrap these if statements in the isAlphaNumeric and isAlpha
