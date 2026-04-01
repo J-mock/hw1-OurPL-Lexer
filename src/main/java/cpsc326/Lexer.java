@@ -47,7 +47,7 @@ import static cpsc326.TokenType.WHILE;
 
 class Lexer {
     private final String source;
-    private final List<Token> tokens = new ArrayList<>();
+    public final List<Token> tokens = new ArrayList<>();
     private int start = 0;
     private int current = 0;
     private int line = 1;
@@ -284,25 +284,24 @@ class Lexer {
             case '\"':
                 string();
                 break;
-            
+            default:
+                if(isAlphaNumeric(check)){
+                    if(isDigit(check)){
+                        // Call Number
+                        number();
+                    }
+                    else if(isAlpha(check) && check != '_'){
+                        identifier();
+                    }else{
+                        
+                        error(line, "Unexpected character.");
+                    }
+                }else{
+                    error(line, "Unexpected character.");
+                }
+                break;
         }
         // No cases match so should be an identifier or a digit
-        if(isAlphaNumeric(check)){
-            if(isDigit(check)){
-                // Call Number
-                number();
-            }
-            if(isAlpha(check) && check != '_'){
-                identifier();
-            }else{
-                
-                error(line, "Unexpected character.");
-            }
-        }else{
-            error(line, "Unexpected character.");
-        }
-        
         // May want to wrap these if statements in the isAlphaNumeric and isAlpha
     }
-    
 }

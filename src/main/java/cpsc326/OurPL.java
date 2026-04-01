@@ -58,9 +58,20 @@ public class OurPL {
     static void error(int line, String message) {
         report(line, "", message);
     }
+    static void error(Token token, String message){
+        report(token, "", message);
+    }
 
     private static void report(int line, String where, String message) {
         System.err.println("[line " + line + "] Error" + where + ": " + message);
+        hadError = true;
+    }
+    private static void report(Token token, String where, String message) {
+        System.err.println("[token " + token + "] Error" + where + ": " + message);
+        hadError = true;
+    }
+    static void runtimeError(RuntimeError error){
+        System.err.println("Runtime error:" + error);
         hadError = true;
     }
 }
