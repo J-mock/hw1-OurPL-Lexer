@@ -24,6 +24,6 @@ public class Main {
         intr.interpret(parsedExpr);
 
         System.out.println(output);
-
+        System.out.println("End");
     }
 }
