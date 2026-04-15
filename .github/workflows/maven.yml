@@ -27,7 +27,11 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
-    - name: Build with Maven
+    - name: Run Example
       run: mvn clean compile exec:java -Dexec.args="examples/example1.opl"
 
+    - name: Run Tests
+      run: mvn test
+
     
+      
