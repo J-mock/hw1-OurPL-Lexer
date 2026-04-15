@@ -31,7 +31,7 @@ jobs:
       run: mvn clean compile exec:java -Dexec.args="examples/example1.opl"
 
     - name: Run Tests
-      run: mvn test
+      run: mvn test --no-transfer-progress
 
     
       
