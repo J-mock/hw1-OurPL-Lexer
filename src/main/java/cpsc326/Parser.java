@@ -176,7 +176,7 @@ class Parser {
     }
 
     private ParseError error(Token token, String message) {
-        OurPL.error(token, message);
+        //OurPL.error(token, message);
         return new ParseError();
     }
 

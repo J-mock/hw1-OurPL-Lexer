@@ -5,7 +5,7 @@ class Interpreter implements Expr.Visitor<Object>{
         try {
             Object value = evaluate(expression);
 
-            System.out.println("Stringify: " + stringify(value));
+            System.out.println(stringify(value));
         } catch (RuntimeError error) {
             OurPL.runtimeError(error);
         }
