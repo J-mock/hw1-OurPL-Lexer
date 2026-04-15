@@ -12,5 +12,4 @@ enum TokenType {
     ELSE, FALSE, FOR, FUN, IF, NIL, OR, PRINT, 
     RETURN, STRUCT, THIS, TRUE, VAR, WHILE,
     EOF, AND
-        // TODO: add the token types needed by the OurPL lexer.
 }

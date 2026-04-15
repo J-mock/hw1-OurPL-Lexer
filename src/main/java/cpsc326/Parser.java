@@ -11,6 +11,7 @@ import static cpsc326.TokenType.FUN;
 import static cpsc326.TokenType.GREATER;
 import static cpsc326.TokenType.GREATER_EQUAL;
 import static cpsc326.TokenType.IF;
+import static cpsc326.TokenType.LEFT_PAREN;
 import static cpsc326.TokenType.LESS;
 import static cpsc326.TokenType.LESS_EQUAL;
 import static cpsc326.TokenType.MINUS;
@@ -18,6 +19,7 @@ import static cpsc326.TokenType.NUMBER;
 import static cpsc326.TokenType.PLUS;
 import static cpsc326.TokenType.PRINT;
 import static cpsc326.TokenType.RETURN;
+import static cpsc326.TokenType.RIGHT_PAREN;
 import static cpsc326.TokenType.SEMICOLON;
 import static cpsc326.TokenType.SLASH;
 import static cpsc326.TokenType.STAR;
@@ -130,42 +132,31 @@ class Parser {
     }
 
     private Expr primary() {
-        // TODO complete function
-        if(match(NUMBER)) return new Expr.Literal(previous().literal);
-        if(match(STRING)) return new Expr.Literal(tokens.get(current).literal);
-
-        /* 
+        
         switch(peek().type){
             case NUMBER:
-                Expr number = new Expr.Literal(tokens.get(current).literal);
-                advance();
-                return number;
             case STRING:
-                Expr string = new Expr.Literal(tokens.get(current));
-                return string;
+                advance();
+                return new Expr.Literal(previous().literal);
             case TRUE:
-                Expr tbool = new Expr.Literal(tokens.get(current));
-                return tbool;
             case FALSE:
-                Expr fbool = new Expr.Literal(tokens.get(current));
-                return fbool;
-            case LEFT_PAREN:
-                Expr startGroup = new Expr.Grouping(expression());
-                return startGroup;
-                // call expression()
-            case RIGHT_PAREN:
-                // Consume and continue?
+                advance();
+                return new Expr.Literal(previous().lexeme);
             case NIL:
-                Expr nil = new Expr.Literal(tokens.get(current));
-                return nil;
+                advance();
+                return new Expr.Literal(previous().lexeme);
+            case LEFT_PAREN:
+                advance();
+                Expr expr = expression();
+                consume(RIGHT_PAREN, "Right parentheses expected");
+                return expr;
             default:
-                // Throw an error?
                 // Synchronize?
                 synchronize();
-        }*/
-        
+                return expression();
+        }
 
-        throw error(peek(), "Expect expression.");
+        // throw error(peek(), "Expect expression.");
     }
 
     private boolean match (TokenType... types) {

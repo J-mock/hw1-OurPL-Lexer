@@ -4,7 +4,8 @@ class Interpreter implements Expr.Visitor<Object>{
     void interpret(Expr expression) {
         try {
             Object value = evaluate(expression);
-            System.out.println(stringify(value));
+
+            System.out.println("Stringify: " + stringify(value));
         } catch (RuntimeError error) {
             OurPL.runtimeError(error);
         }

@@ -5,7 +5,7 @@ public class Main {
     
     public static void main(String args[]){
 
-        String arg = "1 + 2 * 3 - 4";
+        String arg = "(3 + \"true\") * 2";
         System.out.println("Trying lexer load");
         Lexer newLexer = new Lexer(arg);
         System.out.println("Tryig parse init and scan tokens");
@@ -14,8 +14,15 @@ public class Main {
         System.out.println("Trying parse");
         Expr parsedExpr = newParser.parse();
         
+        System.out.println("Trying printer");
         ASTPrinter printer = new ASTPrinter();
         String output = printer.print(parsedExpr);
+
+        System.out.println(output);
+        Interpreter intr = new Interpreter();
+
+        intr.interpret(parsedExpr);
+
         System.out.println(output);
 
     }
