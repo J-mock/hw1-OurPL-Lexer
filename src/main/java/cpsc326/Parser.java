@@ -1,24 +1,32 @@
 package cpsc326;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static cpsc326.TokenType.AND;
 import static cpsc326.TokenType.BANG;
 import static cpsc326.TokenType.BANG_EQUAL;
+import static cpsc326.TokenType.ELSE;
 import static cpsc326.TokenType.EOF;
+import static cpsc326.TokenType.EQUAL;
 import static cpsc326.TokenType.EQUAL_EQUAL;
 import static cpsc326.TokenType.FOR;
 import static cpsc326.TokenType.FUN;
 import static cpsc326.TokenType.GREATER;
 import static cpsc326.TokenType.GREATER_EQUAL;
+import static cpsc326.TokenType.IDENTIFIER;
 import static cpsc326.TokenType.IF;
+import static cpsc326.TokenType.LEFT_BRACE;
 import static cpsc326.TokenType.LEFT_PAREN;
 import static cpsc326.TokenType.LESS;
 import static cpsc326.TokenType.LESS_EQUAL;
 import static cpsc326.TokenType.MINUS;
 import static cpsc326.TokenType.NUMBER;
+import static cpsc326.TokenType.OR;
 import static cpsc326.TokenType.PLUS;
 import static cpsc326.TokenType.PRINT;
 import static cpsc326.TokenType.RETURN;
+import static cpsc326.TokenType.RIGHT_BRACE;
 import static cpsc326.TokenType.RIGHT_PAREN;
 import static cpsc326.TokenType.SEMICOLON;
 import static cpsc326.TokenType.SLASH;
@@ -30,7 +38,7 @@ import static cpsc326.TokenType.WHILE;
 
 class Parser {
     private static class ParseError extends RuntimeException{ }
-
+    private ASTPrinter printer = new ASTPrinter();      // Printer for debugging purposes
     private final List<Token> tokens;
     private int current = 0;
 
@@ -38,23 +46,212 @@ class Parser {
         this.tokens = tokens;
     }
 
-    Expr parse() {
-        try {
-            return expression();
-        } catch (ParseError error) {
+    // From mini test, this needs to return a list of statements
+    List<Stmt> parse() {
+        List<Stmt> stmts = new ArrayList<>();
+
+        while(!isAtEnd()){
+            try {
+                stmts.add(declaration());
+                //consume(SEMICOLON, "Expected semicolon after declaration");
+            } catch (ParseError e) {
+                stmts.add(null);
+                return stmts;
+            }
+            
+        }
+        return stmts;
+        
+    }
+
+    private Stmt block(){
+        // Already matched on the left brace
+        List<Stmt> stmts = new ArrayList<>();
+        while(!check(RIGHT_BRACE) && !isAtEnd()){
+            stmts.add(declaration());
+        }
+        consume(RIGHT_BRACE, "Expected closing brace after block");
+
+        return new Stmt.Block(stmts);
+    }
+
+    private Stmt declaration(){
+        if(match(VAR)){
+            //System.out.println("Creating a var statement...");
+            return varDeclaration();
+        }
+        return statement();
+    }
+
+    private Stmt varDeclaration(){
+        consume(IDENTIFIER, "Expected variable name");
+        Token name = previous();
+        Expr initializer = null;
+        if(match(EQUAL)){
+            initializer = expression();
+            //System.out.println(printer.print(initializer));
+            // System.out.println("Found IDENTIFIER and EQUAL, initializer created");
+        }
+        if(initializer == null){
+            error(previous(), "invalid variable declaration");
             return null;
         }
+        consume(SEMICOLON, "Semicolon expected after variable declaration");
+        //System.out.println("Var statement: " + name.lexeme);
+        return new Stmt.Var(name, initializer); 
+    }
+
+    private Stmt statement(){
+        if(match(PRINT)){
+            
+            return printStmt();
+        }
+        if(match(WHILE)){
+            System.out.println("Creating a while statement");
+            return whileStmt();
+        }
+        if(match(FOR)){
+            return forStatement();
+        }
+        if(match(IF)){
+            return ifStatement();
+        }
+        if(match(LEFT_BRACE)){
+            // TEST -- where to consume closing brace
+            // consume(RIGHT_BRACE, "Expecting closing brace for block");
+            return block();
+        }
+        return exprStmt();
+    }
+
+    private Stmt ifStatement(){
+        consume(LEFT_PAREN, "Left Paren expected after \"if\" declaration");
+        Expr expr = expression();
+        consume(RIGHT_PAREN, "Closing paren expected");
+        Stmt left = statement();
+        // Think this will create a block so no need to clean up RIGHT_BRACE HERE
+        
+        // Else should belong to most recent if statement, not sure if this should go here or somewhere elses
+        if(match(ELSE)){
+            return new Stmt.If(expr, left, statement());
+        }
+        return new Stmt.If(expr, left, null);
+    }
+
+    /* For statement */
+    private Stmt forStatement(){
+        consume(LEFT_PAREN, "Expected left paren after \"for\" declaration");
+        // Few cases to check
+
+        Stmt definition;
+        Expr condition;
+        Expr update;
+
+        if(match(VAR)){
+            definition = varDeclaration();
+        }else if(match(SEMICOLON)){
+            definition = null;
+        }else{
+            definition = exprStmt();
+        }
+
+        if(match(SEMICOLON)){
+            condition = null;
+        }else{
+            condition = expression();
+        }
+
+        if(match(RIGHT_PAREN)){
+            update = null;
+        }else{
+            update = expression();
+            consume(RIGHT_PAREN, "Expected closing paren after for loop declaration");
+        }
+
+
+        return null;
+    }
+
+    private Stmt whileStmt(){
+        
+        consume(LEFT_PAREN, "Expected opening paren after while");
+        //System.out.println(tokens.get(current).lexeme);
+        Expr expr = expression();
+        // Do not reach here?
+        //System.out.println("CREATED EXPRESSSIOn");
+        consume(RIGHT_PAREN, "Expected closing paren after while");
+        Stmt stmt = statement();
+
+        return new Stmt.While(expr, stmt);
+    }
+
+    
+
+    private Stmt exprStmt(){
+        Stmt expr = new Stmt.Expression(expression());
+        consume(SEMICOLON, "Expected semicolon after expression statement");
+        return expr;
+    }
+
+    private Stmt printStmt(){
+        Stmt print = new Stmt.Print(expression());
+        consume(SEMICOLON, "Expected semicolon after expression statement");
+        return print;
     }
 
     private Expr expression() {
-        // TODO complete function
-        return equality();
+        Expr exprA = assignment();
+        
+        //System.out.println(printer.print(exprA));
+        return exprA;
+    }
 
+    private Expr assignment(){
+        // Might need to return an error, if we see an identifier, in this case it should always be assignment?
+        // How do we handle associativity
+        // System.out.println("Reached assignment for while test");
+
+        if(match(IDENTIFIER)){
+            //System.out.print("Matched identifer");
+            Token name = previous();
+            if(match(EQUAL)){
+                //System.out.println(" Creating an assignment");
+                Expr value = assignment();
+                return new Expr.Assign(name, value);
+            }else{
+                // matched on identifier but need to go back
+                current = current - 1;
+            }
+        }
+        
+        return logicOr();
+    }
+
+    private Expr logicOr(){
+        Expr left = logicAnd();
+
+        while(match(OR)){
+            Token operator = previous();
+            Expr right = logicAnd();
+            left = new Expr.Logical(left, operator, right);
+        }
+
+        return left;
+    }
+
+    private Expr logicAnd(){
+        Expr left = equality();
+
+        while(match(AND)){
+            Token operator = previous();
+            Expr right = equality();
+            left = new Expr.Logical(left, operator, right);
+        }
+
+        return left;
     }
 
     private Expr equality() {
-        // TODO complete function
-        
         // Search first
         Expr left = comparison();
         // After comparison unfolds, current can either be eof or != ==
@@ -70,8 +267,6 @@ class Parser {
     }
 
     private Expr comparison() {
-        // TODO complete function
-        
         Expr left = term();
         while(match(GREATER, GREATER_EQUAL, LESS_EQUAL, LESS)){
             // Create another binary operator, left is already built up
@@ -81,32 +276,19 @@ class Parser {
         }
 
         return left;
-
-
     }
 
     private Expr term() {
-        // TODO complete function
-
-        // Another binary opersaator should be the same
         Expr left = factor();
-
         while(match(PLUS, MINUS)){
             Token termToken = previous();
             Expr right = factor();
-            System.out.println("Creating a term of type:" + termToken.lexeme);
             left = new Expr.Binary(left, termToken, right);
         }
-
-        //ASTPrinter printer = new ASTPrinter();
-        //String output = printer.print(left);
-        //System.out.println(output);
         return left;
     }
 
     private Expr factor() {
-        // TODO complete function
-
         Expr left = unary();
         while(match(STAR, SLASH)){
             Token factorToken = previous();
@@ -119,9 +301,6 @@ class Parser {
     }
 
     private Expr unary() {
-        // TODO complete function
-
-        
         if(match(BANG, MINUS)){
             Token unaryToken = tokens.get(current - 1);
             Expr unaryExpr = new Expr.Unary(unaryToken, unary());
@@ -147,13 +326,23 @@ class Parser {
                 return new Expr.Literal(previous().lexeme);
             case LEFT_PAREN:
                 advance();
-                Expr expr = expression();
+                Expr expr = new Expr.Grouping(expression());
                 consume(RIGHT_PAREN, "Right parentheses expected");
                 return expr;
+            case IDENTIFIER:
+                // Vairable could be created in assignment?
+                advance();
+                
+                Expr exprV = new Expr.Variable(previous());
+                
+                return exprV;
             default:
-                // Synchronize?
+                // Throw an error but recover
+                // really not sure what to do with this
                 synchronize();
-                return expression();
+                return new Expr.Literal(null);
+                //error(previous(), "Unexpected token");
+                
         }
 
         // throw error(peek(), "Expect expression.");
@@ -176,7 +365,7 @@ class Parser {
     }
 
     private ParseError error(Token token, String message) {
-        //OurPL.error(token, message);
+        OurPL.error(token, message);
         return new ParseError();
     }
 

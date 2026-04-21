@@ -1,0 +1,88 @@
+-------------------------------------------------------------------------------
+Test set: cpsc326.Parser2MiniTest
+-------------------------------------------------------------------------------
+Tests run: 16, Failures: 4, Errors: 2, Skipped: 0, Time elapsed: 0.043 s <<< FAILURE! -- in cpsc326.Parser2MiniTest
+cpsc326.Parser2MiniTest.logicalOrShortCircuitsDuringInterpretation -- Time elapsed: 0.013 s
+cpsc326.Parser2MiniTest.logicalAndShortCircuitsDuringInterpretation -- Time elapsed: 0.003 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <2> but was: <1>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:177)
+	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1145)
+	at cpsc326.Parser2MiniTest.logicalAndShortCircuitsDuringInterpretation(Parser2MiniTest.java:281)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+cpsc326.Parser2MiniTest.reportsMissingLeftParenAfterIf -- Time elapsed: 0.004 s
+cpsc326.Parser2MiniTest.parsesForLoopWithoutClausesAsInfiniteLoop -- Time elapsed: 0.001 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <1> but was: <2>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:150)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:145)
+	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:531)
+	at cpsc326.Parser2MiniTest.parseSingleStatement(Parser2MiniTest.java:36)
+	at cpsc326.Parser2MiniTest.parsesForLoopWithoutClausesAsInfiniteLoop(Parser2MiniTest.java:202)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+cpsc326.Parser2MiniTest.parsesIfElseStatement -- Time elapsed: 0.001 s
+cpsc326.Parser2MiniTest.parsesVariableDeclarationWithInitializer -- Time elapsed: 0 s
+cpsc326.Parser2MiniTest.interpretsVariableAssignment -- Time elapsed: 0 s
+cpsc326.Parser2MiniTest.bindsElseToNearestIf -- Time elapsed: 0 s
+cpsc326.Parser2MiniTest.reportsMissingSemicolonInsideForHeader -- Time elapsed: 0.001 s
+cpsc326.Parser2MiniTest.interpretsForLoop -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "cpsc326.Stmt.accept(cpsc326.Stmt$Visitor)" because "stmt" is null
+	at cpsc326.Interpreter.evaluate(Interpreter.java:97)
+	at cpsc326.Interpreter.interpret(Interpreter.java:13)
+	at cpsc326.Parser2MiniTest.interpret(Parser2MiniTest.java:60)
+	at cpsc326.Parser2MiniTest.interpretsForLoop(Parser2MiniTest.java:257)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+cpsc326.Parser2MiniTest.parsesAssignmentExpression -- Time elapsed: 0.001 s
+cpsc326.Parser2MiniTest.interpretsForLoopWithoutIncrementWhenBodyUpdatesVariable -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "cpsc326.Stmt.accept(cpsc326.Stmt$Visitor)" because "stmt" is null
+	at cpsc326.Interpreter.evaluate(Interpreter.java:97)
+	at cpsc326.Interpreter.interpret(Interpreter.java:13)
+	at cpsc326.Parser2MiniTest.interpret(Parser2MiniTest.java:60)
+	at cpsc326.Parser2MiniTest.interpretsForLoopWithoutIncrementWhenBodyUpdatesVariable(Parser2MiniTest.java:264)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+cpsc326.Parser2MiniTest.parsesForLoopIntoInitializerAndWhile -- Time elapsed: 0.001 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: not <null>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:152)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertNotNull.failNull(AssertNotNull.java:49)
+	at org.junit.jupiter.api.AssertNotNull.assertNotNull(AssertNotNull.java:35)
+	at org.junit.jupiter.api.AssertNotNull.assertNotNull(AssertNotNull.java:30)
+	at org.junit.jupiter.api.Assertions.assertNotNull(Assertions.java:304)
+	at cpsc326.Parser2MiniTest.parseSingleStatement(Parser2MiniTest.java:37)
+	at cpsc326.Parser2MiniTest.parsesForLoopIntoInitializerAndWhile(Parser2MiniTest.java:158)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+cpsc326.Parser2MiniTest.parsesWhileStatement -- Time elapsed: 0 s
+cpsc326.Parser2MiniTest.parserRecoversAfterBrokenDeclaration -- Time elapsed: 0.001 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <2> but was: <1>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:150)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:145)
+	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:531)
+	at cpsc326.Parser2MiniTest.parserRecoversAfterBrokenDeclaration(Parser2MiniTest.java:242)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+cpsc326.Parser2MiniTest.reportsMissingSemicolonAfterVarDeclaration -- Time elapsed: 0.001 s

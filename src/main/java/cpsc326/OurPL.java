@@ -31,6 +31,9 @@ public class OurPL {
 
     static boolean hadError = false;
 
+    // Need to update and implement runtime error
+    static boolean hadRuntimeError = false;
+
     public static void runPrompt() throws IOException {
         InputStreamReader input = new InputStreamReader(System.in);
         BufferedReader reader = new BufferedReader(input);

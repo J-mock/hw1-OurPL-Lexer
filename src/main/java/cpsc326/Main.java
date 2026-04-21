@@ -1,30 +1,23 @@
 package cpsc326;
 
+import java.util.List;
+
 public class Main {
     
     
     public static void main(String args[]){
 
-        String arg = "(3 + \"true\") * 2";
-        System.out.println("Trying lexer load");
-        Lexer newLexer = new Lexer(arg);
-        System.out.println("Tryig parse init and scan tokens");
-        Parser newParser = new Parser(newLexer.scanTokens());
-        System.out.println("Tokens scanned: " + newLexer.tokens);
-        System.out.println("Trying parse");
-        Expr parsedExpr = newParser.parse();
+        String source = "var value = 1; value = value + 2; print value;";
+        Lexer lex = new Lexer(source);
+        System.out.println("Tokens scanned: " + lex.scanTokens());
         
-        System.out.println("Trying printer");
+        Parser parse = new Parser(lex.scanTokens());
         ASTPrinter printer = new ASTPrinter();
-        String output = printer.print(parsedExpr);
 
-        System.out.println(output);
-        Interpreter intr = new Interpreter();
-
-        intr.interpret(parsedExpr);
-
-        System.out.println(output);
-        System.out.println("End");
-        System.out.println("End2");
+        Interpreter interpret = new Interpreter();
+        List<Stmt> stmts = parse.parse();
+        
+        
+        
     }
 }
