@@ -138,7 +138,6 @@ class Parser {
         return new Stmt.If(expr, left, null);
     }
 
-    /* For statement */
     private Stmt forStatement(){
         consume(LEFT_PAREN, "Expected left paren after \"for\" declaration");
         // Few cases to check
@@ -168,10 +167,35 @@ class Parser {
             consume(RIGHT_PAREN, "Expected closing paren after for loop declaration");
         }
 
+        // Need to add condition to the while loop condition
+        // Add the update to while loop body
+        // Add var declaration into the block (if a variable was declared)
+        // initialize block and list for use
+        // Outer Block? or just stor e all inside loop block
+        Stmt loopBody = statement();
 
-        return null;
+        if(update != null){
+            List<Stmt> loopAll = new ArrayList<>();
+            loopAll.add(loopBody);
+            loopAll.add(new Stmt.Expression(update));
+            loopBody = new Stmt.Block(loopAll);
+        }
+        if(condition == null){
+            condition = new Expr.Literal(true);
+        }
+        loopBody = new Stmt.While(condition, loopBody);
+
+       if(definition != null){
+            List<Stmt> blockList = new ArrayList<>();
+            blockList.add(definition);
+            blockList.add(loopBody);
+            loopBody = new Stmt.Block(blockList);
+       }
+
+        return loopBody;
     }
 
+    
     private Stmt whileStmt(){
         
         consume(LEFT_PAREN, "Expected opening paren after while");
